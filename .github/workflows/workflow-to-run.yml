@@ -20,3 +20,4 @@ jobs:
       with:
         script: |
           console.log('branch_name input: ' + process.env.BRANCH_NAME)
+    - run: sleep 10
