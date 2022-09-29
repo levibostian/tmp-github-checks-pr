@@ -12,7 +12,7 @@ jobs:
       name: Pause pull request while waiting for build 
       with:
         script: |
-          github.rest.checks.create({
+          const result = await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             name: 'Name of the check',
@@ -20,4 +20,6 @@ jobs:
             head_sha: context.sha,
             details_url: 'https://github.com/foo/foo/runs/1'
           })
+          
+          console.log(result)
        
