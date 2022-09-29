@@ -15,7 +15,7 @@ jobs:
           octokit.rest.checks.create({
             owner: context.github.repository_owner,
             repo: context.github.repository,
-            name: 'Name of the check'
+            name: 'Name of the check',
             status: 'in_progress',
             head_sha: context.github.sha,
             details_url: 'https://github.com/foo/foo/runs/1'
