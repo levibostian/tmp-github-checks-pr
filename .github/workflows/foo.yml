@@ -12,16 +12,18 @@ jobs:
       name: Pause pull request while waiting for build 
       with:
         script: |
-          console.log(context)
-          // console.log(JSON.stringify(context))
-
           const result = await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             name: 'Name of the check',
             status: 'in_progress',
-            head_sha: context.sha,
-            details_url: 'https://github.com/foo/foo/runs/1'
+            head_sha: context.payload.after, 
+            details_url: 'https://github.com/foo/foo/runs/1',
+            outputs: {
+              title:"Mighty Readme report",
+              summary:"summary here",
+              text:"texdt here"
+            }
           })
           
           console.log(result)
