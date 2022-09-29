@@ -1,0 +1,20 @@
+name: Run workflowwwww
+on: 
+  workflow_dispatch:  
+    inputs:
+      branch_name: 
+        type: string
+        description: The name of the branch of the SDK 
+        required: true 
+
+jobs:
+  run-me:
+    runs-on: ubuntu-latest
+    name: Triggered workflow 
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/github-script@v6
+      name: Run other workflow       
+      with:
+        script: |
+          console.log('branch_name input: ' + core.getInput('branch_name'))

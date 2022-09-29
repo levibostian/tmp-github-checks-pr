@@ -1,0 +1,27 @@
+name: Run workflowwwww
+on: [push, pull_request]
+
+jobs:
+  sample-app-build:
+    runs-on: ubuntu-latest
+    name: Create automated build of sample app 
+    if: ${{ github.event_name == 'pull_request' }} # only run if on a pull request. It's assumed that something is ready for QA when a pull request is made (even if a draft pull request). 
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/github-script@v6
+      name: Run other workflow       
+      with:
+        script: |
+          console.log(context)
+
+          const result = await github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'workflow-to-run',
+            ref: 'foo', // branch name
+            inputs: {
+              branch_name: 'name-here'
+            }
+          })
+                    
+          console.log(result)
