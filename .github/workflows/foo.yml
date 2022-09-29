@@ -20,4 +20,4 @@ jobs:
             head_sha: context.github.sha,
             details_url: 'https://github.com/foo/foo/runs/1'
           })
-      
+       
