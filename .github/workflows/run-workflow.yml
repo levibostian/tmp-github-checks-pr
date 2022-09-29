@@ -9,6 +9,28 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/github-script@v6
+      name: Pause pull request while waiting for build 
+      id: create-check-run
+      with:
+        script: |
+          const result = await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'Name of the check',
+            status: 'in_progress',
+            head_sha: context.payload.after, 
+            details_url: 'https://github.com/foo/foo/runs/1',
+            outputs: {
+              title:"Mighty Readme report",
+              summary:"summary here",
+              text:"texdt here"
+            }
+          })
+                    
+          console.log(result)
+          core.setOutput('checkId', result.data.id)
+
+    - uses: actions/github-script@v6
       name: Run other workflow       
       with:
         script: |
@@ -17,11 +39,54 @@ jobs:
           const result = await github.rest.actions.createWorkflowDispatch({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            workflow_id: 'workflow-to-run',
+            workflow_id: 'workflow-to-run.yml',
             ref: 'foo', // branch name
             inputs: {
               branch_name: 'name-here'
             }
           })
                     
-          console.log(result)
+          console.log(result)          
+
+    - uses: actions/github-script@v6
+      name: Finish it 
+      env: 
+        CHECK_ID: ${{ steps.create-check-run.outputs.checkId }}
+      with:
+        script: |
+          let buildDone = false 
+
+          while (!buildDone) {
+            const response = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,            
+              workflow_id: 'workflow-to-run.yml',
+              branch: 'foo',
+              event: 'workflow_dispatch',
+              actor: 'github-actions'
+            })
+
+            console.log(response)
+
+            const lastWorkflowRun = response.data.workflow_runs[response.data.total_count - 1]
+            console.log(lastWorkflowRun)
+            
+            buildDone = lastWorkflowRun.status == 'completed'
+
+            if (buildDone) {
+              await github.rest.checks.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                check_run_id: process.env.CHECK_ID,
+                status: 'completed',
+                conclusion: 'success'
+              })
+            } else {
+              // sleep 2 seconds 
+              console.log('sleeping 2 seconds....')
+              await new Promise(r => setTimeout(r, 2000));
+              console.log('done sleeping')
+            }
+          }
+
+          
