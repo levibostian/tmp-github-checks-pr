@@ -13,11 +13,11 @@ jobs:
       with:
         script: |
           github.rest.checks.create({
-            owner: context.github.repository_owner,
-            repo: context.github.repository,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
             name: 'Name of the check',
             status: 'in_progress',
-            head_sha: context.github.sha,
+            head_sha: context.sha,
             details_url: 'https://github.com/foo/foo/runs/1'
           })
        
