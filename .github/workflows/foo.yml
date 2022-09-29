@@ -42,7 +42,7 @@ jobs:
           await github.rest.checks.update({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            check_run_id: env.CHECK_ID,
+            check_run_id: process.env.CHECK_ID,
             status: 'completed',
             conclusion: 'success'
           })
