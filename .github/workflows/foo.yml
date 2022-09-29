@@ -12,7 +12,7 @@ jobs:
       name: Pause pull request while waiting for build 
       with:
         script: |
-          octokit.rest.checks.create({
+          github.rest.checks.create({
             owner: context.github.repository_owner,
             repo: context.github.repository,
             name: 'Name of the check',
