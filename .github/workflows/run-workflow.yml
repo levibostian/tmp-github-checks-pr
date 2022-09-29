@@ -82,7 +82,7 @@ jobs:
                 conclusion: 'success'
               })
             } else {
-              # sleep 2 seconds 
+              // sleep 2 seconds 
               console.log('sleeping 2 seconds....')
               await new Promise(r => setTimeout(r, 2000));
               console.log('done sleeping')
