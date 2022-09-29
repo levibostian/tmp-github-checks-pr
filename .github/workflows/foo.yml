@@ -5,13 +5,16 @@ jobs:
   sample-app-build:
     runs-on: ubuntu-latest
     name: Create automated build of sample app 
-    if: ${{ github.event_name == 'push' }} 
+    if: ${{ github.event_name == 'pull_request' }} # only run if on a pull request. It's assumed that something is ready for QA when a pull request is made (even if a draft pull request). 
     steps:
     - uses: actions/checkout@v2
     - uses: actions/github-script@v6
       name: Pause pull request while waiting for build 
       with:
         script: |
+          console.log(context)
+          // console.log(JSON.stringify(context))
+
           const result = await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -20,6 +23,6 @@ jobs:
             head_sha: context.sha,
             details_url: 'https://github.com/foo/foo/runs/1'
           })
-
+          
           console.log(result)
        
