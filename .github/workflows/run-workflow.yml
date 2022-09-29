@@ -17,7 +17,7 @@ jobs:
           const result = await github.rest.actions.createWorkflowDispatch({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            workflow_id: 'workflow-to-run',
+            workflow_id: 'workflow-to-run.yml',
             ref: 'foo', // branch name
             inputs: {
               branch_name: 'name-here'
