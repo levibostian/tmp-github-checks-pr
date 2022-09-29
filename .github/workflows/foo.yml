@@ -1,0 +1,23 @@
+name: Tests
+on: [push, pull_request]
+
+jobs:
+  sample-app-build:
+    runs-on: ubuntu-latest
+    name: Create automated build of sample app 
+    if: ${{ github.event_name == 'pull_request' }} # only run if on a pull request. It's assumed that something is ready for QA when a pull request is made (even if a draft pull request). 
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/github-script@v6
+      name: Pause pull request while waiting for build 
+      with:
+        script: |
+          octokit.rest.checks.create({
+            owner: context.github.repository_owner,
+            repo: context.github.repository,
+            name: 'Name of the check'
+            status: 'in_progress',
+            head_sha: context.github.sha,
+            details_url: 'https://github.com/foo/foo/runs/1'
+          })
+      
